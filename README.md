@@ -1,5 +1,5 @@
 ## Description
-This Node.js script makes it easy to download MP3 songs playlists from YouTube. It takes a `.txt` file with your search queries, and fetches the first top result for each of your query, placing them in a dedicated folder.
+This Node.js script makes it easy to download MP3 song playlists from YouTube. It takes a `.txt` file with your search queries, and fetches the first top result for each of your query, placing them in a dedicated folder.
 
 ## How to use
 To get started with this project, follow these steps to set it up on your local machine:
