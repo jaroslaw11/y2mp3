@@ -2,7 +2,7 @@ const fs = require('fs');
 const ytdl = require('ytdl-core');
 const ytSearch = require('yt-search');
 const transliteration = require('transliteration');
-
+const ffmpeg = require('fluent-ffmpeg');
 const inputFolderPath = './input'; // Path to the input folder
 
 const downloadMP3 = async (videoUrl, searchQuery, outputFolder) => {
@@ -21,18 +21,44 @@ const downloadMP3 = async (videoUrl, searchQuery, outputFolder) => {
     if (!fs.existsSync(outputFolder)) {
       fs.mkdirSync(outputFolder, { recursive: true });
     }
-
-    const videoStream = ytdl(videoUrl, { format });
+    
+    options = {
+      quality: 'highest',
+      filter: 'audioonly',
+      
+    };
+    const videoStream = ytdl(videoUrl, options);
 
     videoStream.pipe(fs.createWriteStream(output));
-
+    
     videoStream.on('end', () => {
       console.log(`Download complete for search query: ${searchQuery}`);
-    });
 
+      ffmpeg()
+      .input(output)
+      .audioCodec('libmp3lame')
+      .toFormat('mp3')
+      .on('end', () => {
+        console.log(`Converted to MP3: ${output}`);
+        fs.unlink(output, (err) => {
+          if (err) {
+            console.error('Error deleting file:', err.message);
+            return;
+          }
+  
+          console.log(`File ${output} deleted successfully`);
+        });
+      })
+      .on('error', (err) => {
+        console.error('Error converting to MP3:', err);
+      })
+      .save(`${outputFolder}/${getOutputFileName(info.videoDetails.title, 'mp3')}`);
+    });
+    
     videoStream.on('error', (error) => {
       console.error(`Error downloading file for search query '${searchQuery}':`, error.message);
     });
+    
   } catch (error) {
     console.error(`Error for search query '${searchQuery}':`, error.message);
   }
@@ -77,10 +103,10 @@ const transliterateText = (text) => {
   return transliteration.transliterate(text);
 };
 
-const getOutputFileName = (videoTitle) => {
+const getOutputFileName = (videoTitle, format = 'mp4') => {
     const transliteratedTitle = transliterateText(videoTitle);
     const sanitizedTitle = sanitizeFileName(transliteratedTitle);
-    return `${sanitizedTitle}.mp3`;
+    return `${sanitizedTitle}.${format}`;
   };
   
 

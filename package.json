@@ -12,6 +12,8 @@
   "dependencies": {
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
+    "ffmpeg-static": "^5.2.0",
+    "fluent-ffmpeg": "^2.1.2",
     "transliteration": "^2.3.5",
     "youtube-dl-exec": "^2.4.3",
     "yt-search": "^2.10.4",
