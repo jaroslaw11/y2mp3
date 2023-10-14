@@ -39,6 +39,7 @@ const downloadMP3 = async (videoUrl, searchQuery, outputFolder) => {
       .audioCodec('libmp3lame')
       .toFormat('mp3')
       .on('end', () => {
+        console.log('-------------------------------------');
         console.log(`Converted to MP3: ${output}`);
         fs.unlink(output, (err) => {
           if (err) {
@@ -47,6 +48,7 @@ const downloadMP3 = async (videoUrl, searchQuery, outputFolder) => {
           }
   
           console.log(`File ${output} deleted successfully`);
+          console.log('-------------------------------------');
         });
       })
       .on('error', (err) => {
@@ -94,9 +96,7 @@ const getOutputFolderName = (inputFile) => {
 };
 
 const sanitizeFileName = (fileName) => {
-  const sanitizedFileName = fileName.replace(/[^\w\s-|/\\]/gi, '');
-  const parts = sanitizedFileName.split(/[_|/\\]+/);
-  return parts[0].trim();
+  return fileName.replace(/[_|/\\]+|[^\w\s-|/\\]/gi, '');
 };
 
 const transliterateText = (text) => {
